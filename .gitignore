@@ -1,0 +1,8 @@
+server
+cmd/server/server
+out
+vendor
+.env
+*.swp
+.DS_Store
+
