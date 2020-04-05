@@ -22,13 +22,15 @@ func TopN(svc service) http.HandlerFunc {
 			var err error
 			top, err = strconv.Atoi(topQ)
 			if err != nil {
-				logger.Infof("Invalid top query param request: %v", err)
+				logger.Infof("[TopN] Invalid top query param request: %v", err)
+				return
 			}
 		}
 
 		resp, err := svc.GetTopCountriesData(r.Context(), top)
 		if err != nil {
 			logger.Errorf("[TopN] error fetching countries data: %v", err)
+			return
 		}
 
 		if err := json.NewEncoder(w).Encode(resp); err != nil {

@@ -2,7 +2,9 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"sort"
+	"time"
 )
 
 type TopCountries struct {
@@ -24,4 +26,43 @@ func (c Client) GetTopCountriesData(ctx context.Context, top int) (TopCountries,
 	maxConfirmed := byTotalConfirmed(summary.Countries)
 	sort.Sort(maxConfirmed)
 	return TopCountries{Total: top, Countries: maxConfirmed[:top]}, nil
+}
+
+type CountriesCases struct {
+	CountriesCases []AggregateCountryStatus `Countries`
+}
+
+type AggregateCountryStatus struct {
+	Country     string
+	CountryCode string
+	Cases       []int64
+	Interval    string
+	StartDate   time.Time
+}
+
+func (c Client) GetCountriesCasesByDay(ctx context.Context, countries []string) (CountriesCases, error) {
+	var countriesCases []AggregateCountryStatus
+	for _, cn := range countries {
+		dailyCases, err := c.DayOneCountryLiveCasesEveryday(ctx, cn, confirmed)
+		if err != nil {
+			return CountriesCases{}, fmt.Errorf("error getting case for country :%s err: %v", cn, err)
+		}
+		aggregated := c.aggregateCasesByDay(ctx, dailyCases)
+		countriesCases = append(countriesCases, aggregated)
+	}
+	return CountriesCases{CountriesCases: countriesCases}, nil
+}
+
+func (c Client) aggregateCasesByDay(ctx context.Context, dailyCases CasesByDay) AggregateCountryStatus {
+	var aggregated AggregateCountryStatus
+	if len(dailyCases) > 0 {
+		aggregated.CountryCode = dailyCases[0].CountryCode
+		aggregated.Country = dailyCases[0].Country
+		aggregated.StartDate = dailyCases[0].Date
+		aggregated.Interval = "Daily"
+	}
+	for _, day := range dailyCases {
+		aggregated.Cases = append(aggregated.Cases, int64(day.Cases))
+	}
+	return aggregated
 }

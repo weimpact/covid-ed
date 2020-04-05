@@ -22,10 +22,10 @@ func New() (Client, error) {
 }
 
 type CountryStatus struct {
-	CountryCode string `json:"country_code"`
+	CountryCode string
 	Country     string
-	Lat         float32
-	Lon         float32
+	Lat         string
+	Lon         string
 	Cases       int
 	Status      string
 	Date        time.Time
@@ -65,6 +65,24 @@ type CasesByDay []CountryStatus
 
 func (c Client) CountryLiveCasesEveryday(ctx context.Context, country string, status CaseStatus) (CasesByDay, error) {
 	url := fmt.Sprintf("%s/country/%s/status/%s/live", c.baseURL, country, status)
+
+	resp, err := c.httpCli.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error getting response code: %d", resp.StatusCode)
+	}
+	var cases CasesByDay
+	if err := json.NewDecoder(resp.Body).Decode(&cases); err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return cases, err
+}
+
+func (c Client) DayOneCountryLiveCasesEveryday(ctx context.Context, country string, status CaseStatus) (CasesByDay, error) {
+	url := fmt.Sprintf("%s/dayone/country/%s/status/%s/live", c.baseURL, country, status)
 
 	resp, err := c.httpCli.Get(url)
 	if err != nil {

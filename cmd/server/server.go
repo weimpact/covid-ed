@@ -20,8 +20,9 @@ func server() (*mux.Router, error) {
 	}
 
 	m.HandleFunc("/ping", PingHandler())
-	topHandler := gomw.RequestLogger(country.TopN(cli))
-	m.HandleFunc("/countries/cases", topHandler)
+
+	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.TopN(cli)))
+	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(cli)))
 
 	return m, nil
 }
