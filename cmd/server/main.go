@@ -3,20 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
-	"weimpact/covid-ed/config"
 
-	"github.com/gojek/kat/logger"
+	"github.com/weimpact/covid-ed/config"
+	"github.com/weimpact/covid-ed/logger"
 )
 
 func main() {
 	config.MustLoad()
-
 	router, err := server()
 	if err != nil {
 		logger.Fatalf("error creating server: %v", err)
 	}
-	err = http.ListenAndServe(config.AppAddress(), router)
+
+	addr := config.AppAddress()
+	logger.Infof("listening on address %s", addr)
+	err = http.ListenAndServe(addr, router)
 	if err != nil {
-		log.Fatalf("error listening for rerquests on port: %s err: %v", config.AppAddress(), err)
+		log.Fatalf("error listening for rerquests on port: %s err: %v", addr, err)
 	}
 }

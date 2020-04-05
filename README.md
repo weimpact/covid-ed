@@ -8,9 +8,7 @@ Req: `GET /country/{country}/cases ? count=daily|total`
 Response: 
 ```
 {
-  "timezone": "IST",
-  [
-  {
+  "timezone": "IST", [ {
     "date": "dateformat",
     "count": 33,
   },
@@ -24,3 +22,5 @@ Response:
 
 similarly for `GET /country/{country}/state/{state}/cases ? count=daily|total`
 
+
+Req: `Get /countries/cases ? top=N`
