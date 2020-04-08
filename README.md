@@ -3,7 +3,7 @@
 Project which aims to educate users with information about corona and it's seriousness in local language.
 
 
-Req: `GET /country/{country}/cases ? count=daily|total`
+Req: `GET /countries/{country}/cases ? top=10
 
 Response: 
 ```
@@ -20,7 +20,11 @@ Response:
 }
 ```
 
-similarly for `GET /country/{country}/state/{state}/cases ? count=daily|total`
+similarly for `GET /countries/{country}/cases/aggreggated ? countries=IN,SG & interval=daily
+```
+
+```
 
 
-Req: `Get /countries/cases ? top=N`
+
+`pkg/client` is built on `https://api.covid19api.com/`

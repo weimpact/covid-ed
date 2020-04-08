@@ -11,8 +11,14 @@ import (
 )
 
 type aggregatedService interface {
-	GetCountriesCasesByDay(context.Context, []string) (client.CountriesCases, error)
+	GetCountriesCasesAggregated(context.Context, interval, []string) (client.CountriesCases, error)
 }
+type interval string
+
+const (
+	daily  interval = "daily"
+	weekly interval = "weekly"
+)
 
 func CountriesAggregatedCasesHandler(svc aggregatedService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +29,9 @@ func CountriesAggregatedCasesHandler(svc aggregatedService) http.HandlerFunc {
 			return
 		}
 
-		resp, err := svc.GetCountriesCasesByDay(r.Context(), cns)
+		intervalQ := r.URL.Query().Get("interval")
+
+		resp, err := svc.GetCountriesCasesAggregated(r.Context(), getInterval(intervalQ), cns)
 		if err != nil {
 			logger.Errorf("[CountriesAggregated] couldn't get status by day for cns: %s error: %v", cns, err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -35,5 +43,16 @@ func CountriesAggregatedCasesHandler(svc aggregatedService) http.HandlerFunc {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+	}
+}
+
+func getInterval(i string) interval {
+	switch i {
+	case "daily":
+		return daily
+	case "weekly":
+		return weekly
+	default:
+		return weekly
 	}
 }

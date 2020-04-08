@@ -53,6 +53,19 @@ func (c Client) GetCountriesCasesByDay(ctx context.Context, countries []string) 
 	return CountriesCases{CountriesCases: countriesCases}, nil
 }
 
+func (c Client) GetCountriesCasesByWeek(ctx context.Context, countries []string) (CountriesCases, error) {
+	var countriesCases []AggregateCountryStatus
+	for _, cn := range countries {
+		dailyCases, err := c.DayOneCountryLiveCasesEveryday(ctx, cn, confirmed)
+		if err != nil {
+			return CountriesCases{}, fmt.Errorf("error getting case for country :%s err: %v", cn, err)
+		}
+		aggregated := c.aggregateCasesByWeek(ctx, dailyCases)
+		countriesCases = append(countriesCases, aggregated)
+	}
+	return CountriesCases{CountriesCases: countriesCases}, nil
+}
+
 func (c Client) aggregateCasesByDay(ctx context.Context, dailyCases CasesByDay) AggregateCountryStatus {
 	var aggregated AggregateCountryStatus
 	if len(dailyCases) > 0 {
@@ -63,6 +76,28 @@ func (c Client) aggregateCasesByDay(ctx context.Context, dailyCases CasesByDay) 
 	}
 	for _, day := range dailyCases {
 		aggregated.Cases = append(aggregated.Cases, int64(day.Cases))
+	}
+	return aggregated
+}
+
+func (c Client) aggregateCasesByWeek(ctx context.Context, dailyCases CasesByDay) AggregateCountryStatus {
+	var aggregated AggregateCountryStatus
+	if len(dailyCases) > 0 {
+		aggregated.CountryCode = dailyCases[0].CountryCode
+		aggregated.Country = dailyCases[0].Country
+		aggregated.StartDate = dailyCases[0].Date
+		aggregated.Interval = "Weekly"
+	}
+	for i, day := range dailyCases {
+		// Since the data returned have current data, we shouldn't sum it up
+		// weeklyCases += day.Cases
+		if (i+1)%7 == 0 {
+			aggregated.Cases = append(aggregated.Cases, int64(day.Cases))
+		}
+	}
+	l := len(dailyCases)
+	if l%7 != 0 {
+		aggregated.Cases = append(aggregated.Cases, int64(dailyCases[l-1].Cases))
 	}
 	return aggregated
 }

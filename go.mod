@@ -3,7 +3,7 @@ module github.com/weimpact/covid-ed
 go 1.13
 
 require (
-	github.com/devdinu/middlers v0.0.0-20180517044845-b181c62759f8
+	github.com/devdinu/middlers v0.0.0-20200405153159-a44032e2824b
 	github.com/gojek/kat v0.1.0
 	github.com/gorilla/mux v1.7.4
 	github.com/itsksaurabh/go-corona v1.0.3
