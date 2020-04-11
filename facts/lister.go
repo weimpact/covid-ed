@@ -26,3 +26,23 @@ func Lister(svc Service) http.HandlerFunc {
 		}
 	}
 }
+
+func ListWithFacts(svc Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fms, err := svc.ListFactWithMyth(r.Context())
+		if err != nil {
+			logger.Errorf("[FactsMyths] error listing facts: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if len(fms) == 0 {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		if err := json.NewEncoder(w).Encode(fms); err != nil {
+			logger.Errorf("[FactMyths] error writing response: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+}

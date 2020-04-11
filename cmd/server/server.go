@@ -36,6 +36,7 @@ func server() (*mux.Router, error) {
 	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.TopN(cli)))
 	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService)))
 	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService)))
+	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
 
 	return m, nil
 }
