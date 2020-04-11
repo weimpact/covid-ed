@@ -1,10 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
+	"github.com/weimpact/covid-ed/config"
 	"github.com/weimpact/covid-ed/country"
+	"github.com/weimpact/covid-ed/facts"
 	"github.com/weimpact/covid-ed/pkg/client"
+	"github.com/weimpact/covid-ed/store"
 
 	gomw "github.com/devdinu/middlers"
 	"github.com/gorilla/mux"
@@ -18,12 +24,18 @@ func server() (*mux.Router, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	countryService := country.NewService(cli)
+	db, err := NewDB(config.Database())
+	if err != nil {
+		return nil, err
+	}
+	store := store.Store{DB: db}
+	factService := facts.NewService(store)
 	m.HandleFunc("/ping", PingHandler())
 
 	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.TopN(cli)))
 	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService)))
+	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService)))
 
 	return m, nil
 }
@@ -40,4 +52,21 @@ func PingHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"response":"pong"}`))
 	}
+}
+
+func NewDB(cfg config.DB) (*sqlx.DB, error) {
+	var err error
+	db, err := sqlx.Open(cfg.Driver, cfg.URL())
+	if err != nil {
+		return nil, fmt.Errorf("error opening conn to db: %v", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	db.SetMaxIdleConns(cfg.MaxIdleConns)
+	db.SetMaxOpenConns(cfg.MaxOpenConns)
+	db.SetConnMaxLifetime(cfg.MaxConnLifetime())
+	return db, nil
 }

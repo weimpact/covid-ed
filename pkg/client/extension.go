@@ -29,7 +29,7 @@ func (c Client) GetTopCountriesData(ctx context.Context, top int) (TopCountries,
 }
 
 type CountriesCases struct {
-	CountriesCases []AggregateCountryStatus `Countries`
+	CountriesCases []AggregateCountryStatus `json:"Countries"`
 }
 
 type AggregateCountryStatus struct {
