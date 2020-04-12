@@ -6,4 +6,4 @@ vendor
 *.swp
 .DS_Store
 **/*.swp
-
+heroku.env

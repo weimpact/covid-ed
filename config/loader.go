@@ -12,7 +12,7 @@ var app Application
 func MustLoad() {
 	var errs []error
 
-	if err := envconfig.Process("APP", &app.server); err != nil {
+	if err := envconfig.Process("", &app.server); err != nil {
 		errs = append(errs, err)
 	}
 
