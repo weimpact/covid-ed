@@ -31,7 +31,7 @@ setup:
 	echo ${ENV_FILE}
 
 
-test: setup migrate
+test: setup db.migrate
 	go test -race ./...
 
 only_test:
@@ -49,19 +49,23 @@ vet:
 build:
 	go build -o ${BINARY} ./cmd/server
 
-migrate:
+db.migrate:
 	migrate -verbose -path migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" up
 
-rollback:
-	migrate -verbose -path migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" down 1
+db.rollback:
+	migrate -verbose -path migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" down 1 
 
-dropdb:
+db.rollback_all:
+	echo Y | migrate -verbose -path migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" down
+
+db.drop:
 	dropdb ${DB_NAME} --if-exists
 
-createdb:
+db.create:
 	createdb ${DB_NAME}
 
-seed:
-	echo ${DB_PASSWORD} ${DB_USER} ${DB_NAME}
+db.seed:
 	psql "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" -a -f scripts/seed_data.sql
 
+db.clear:
+	psql "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" -a -f scripts/clear.sql
