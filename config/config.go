@@ -6,9 +6,10 @@ import (
 )
 
 type Server struct {
-	Host   string `required:"true"`
-	Port   int    `envconfig:"PORT"`
-	Scheme string `default:"http"`
+	Host                     string `required:"true"`
+	Port                     int    `envconfig:"PORT"`
+	Scheme                   string `default:"http"`
+	AccessControlAllowOrigin string `split_words:"true"`
 }
 
 type Application struct {
@@ -18,6 +19,10 @@ type Application struct {
 
 func AppAddress() string {
 	return fmt.Sprintf("%s:%d", app.server.Host, app.server.Port)
+}
+
+func AccessControlAllowOrigin() string {
+	return app.server.AccessControlAllowOrigin
 }
 
 func Database() DB {

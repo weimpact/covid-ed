@@ -19,6 +19,7 @@ import (
 func server() (*mux.Router, error) {
 	m := mux.NewRouter()
 	m.Use(mux.MiddlewareFunc(contentWriter))
+	m.Use(mux.MiddlewareFunc(accessController))
 
 	cli, err := client.New()
 	if err != nil {
@@ -39,6 +40,14 @@ func server() (*mux.Router, error) {
 	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
 
 	return m, nil
+}
+
+func accessController(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", config.AccessControlAllowOrigin())
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func contentWriter(next http.Handler) http.Handler {
