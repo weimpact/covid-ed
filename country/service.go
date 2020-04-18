@@ -10,6 +10,11 @@ type Service struct {
 	cli client.Client
 }
 
+type Filter struct {
+	top    int
+	deaths bool
+}
+
 func (s Service) GetCountriesCasesAggregated(ctx context.Context, i interval, countries []string) (client.CountriesCases, error) {
 	var aggregatedCases client.CountriesCases
 	switch i {
@@ -39,4 +44,14 @@ func (s Service) CountriesCasesAggregatedWeekly(ctx context.Context, countries [
 		return client.CountriesCases{}, err
 	}
 	return cases, nil
+}
+
+func (s Service) GetCountriesData(ctx context.Context, filter Filter) (client.CountriesData, error) {
+	if filter.top > 0 {
+		return s.cli.GetTopCountriesData(ctx, filter.top)
+	}
+	if filter.deaths {
+		return s.cli.GetCountriesDataWithDeaths(ctx)
+	}
+	return client.CountriesData{}, nil
 }

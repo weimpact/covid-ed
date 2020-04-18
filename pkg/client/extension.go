@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type TopCountries struct {
+type CountriesData struct {
 	Total     int
 	Countries []Country `json:"Countries"`
 }
@@ -18,14 +18,36 @@ func (c byTotalConfirmed) Len() int           { return len(c) }
 func (c byTotalConfirmed) Less(i, j int) bool { return c[i].TotalConfirmed > c[j].TotalConfirmed }
 func (c byTotalConfirmed) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
 
-func (c Client) GetTopCountriesData(ctx context.Context, top int) (TopCountries, error) {
+type byTotalDeaths []Country
+
+func (c byTotalDeaths) Len() int           { return len(c) }
+func (c byTotalDeaths) Less(i, j int) bool { return c[i].TotalDeaths > c[j].TotalDeaths }
+func (c byTotalDeaths) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
+
+func (c Client) GetTopCountriesData(ctx context.Context, top int) (CountriesData, error) {
 	summary, err := c.Summary(ctx)
 	if err != nil {
-		return TopCountries{}, err
+		return CountriesData{}, err
 	}
 	maxConfirmed := byTotalConfirmed(summary.Countries)
 	sort.Sort(maxConfirmed)
-	return TopCountries{Total: top, Countries: maxConfirmed[:top]}, nil
+	return CountriesData{Total: top, Countries: maxConfirmed[:top]}, nil
+}
+
+func (c Client) GetCountriesDataWithDeaths(ctx context.Context) (CountriesData, error) {
+	summary, err := c.Summary(ctx)
+	if err != nil {
+		return CountriesData{}, err
+	}
+	var data []Country
+	for _, c := range summary.Countries {
+		if c.TotalDeaths > 0 {
+			data = append(data, c)
+		}
+	}
+	countriesWithDeaths := byTotalDeaths(data)
+	sort.Sort(countriesWithDeaths)
+	return CountriesData{Total: len(countriesWithDeaths), Countries: countriesWithDeaths}, nil
 }
 
 type CountriesCases struct {

@@ -11,30 +11,35 @@ import (
 )
 
 type service interface {
-	GetTopCountriesData(context.Context, int) (client.TopCountries, error)
+	GetCountriesData(context.Context, Filter) (client.CountriesData, error)
 }
 
-func TopN(svc service) http.HandlerFunc {
+func Lister(svc service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		top := 5
+		var filter Filter
 		topQ := r.URL.Query().Get("top")
 		if topQ != "" {
 			var err error
-			top, err = strconv.Atoi(topQ)
+			filter.top, err = strconv.Atoi(topQ)
 			if err != nil {
-				logger.Infof("[TopN] Invalid top query param request: %v", err)
+				logger.Infof("[CountriesData] Invalid top query param request: %v", err)
 				return
 			}
 		}
 
-		resp, err := svc.GetTopCountriesData(r.Context(), top)
+		deathsQ := r.URL.Query().Get("deaths")
+		if deathsQ != "" && deathsQ == "true" {
+			filter.deaths = true
+		}
+
+		resp, err := svc.GetCountriesData(r.Context(), filter)
 		if err != nil {
-			logger.Errorf("[TopN] error fetching countries data: %v", err)
+			logger.Errorf("[CountriesData] error fetching countries data: %v", err)
 			return
 		}
 
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
-			logger.Errorf("[TopN] error writing response: %v", err)
+			logger.Errorf("[CountriesData] error writing response: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}
