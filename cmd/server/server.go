@@ -9,6 +9,7 @@ import (
 	"github.com/weimpact/covid-ed/config"
 	"github.com/weimpact/covid-ed/country"
 	"github.com/weimpact/covid-ed/facts"
+	"github.com/weimpact/covid-ed/lang"
 	"github.com/weimpact/covid-ed/pkg/client"
 	"github.com/weimpact/covid-ed/store"
 
@@ -38,6 +39,7 @@ func server() (*mux.Router, error) {
 	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService)))
 	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService)))
 	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
+	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages()))
 
 	return m, nil
 }
