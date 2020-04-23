@@ -12,6 +12,7 @@ type Article struct {
 	Title     string    `db:"title"`
 	FactID    int       `db:"fact_id"`
 	URL       string    `db:"url"`
+	Locale    string    `db:"locale"`
 	CreatedAt time.Time `db:"created_at"`
 }
 

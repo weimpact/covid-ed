@@ -37,13 +37,6 @@ const (
 	confirmed CaseStatus = "confirmed"
 )
 
-type Global struct{}
-
-type Summary struct {
-	Global
-	Countries
-}
-
 func (c Client) Summary(ctx context.Context) (Summary, error) {
 	url := fmt.Sprintf("%s/summary", c.baseURL)
 	resp, err := c.httpCli.Get(url)

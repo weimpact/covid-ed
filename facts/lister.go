@@ -9,7 +9,9 @@ import (
 
 func Lister(svc Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fs, err := svc.ListFacts(r.Context())
+		locale := r.URL.Query().Get("locale")
+
+		fs, err := svc.ListFacts(r.Context(), locale)
 		if err != nil {
 			logger.Errorf("[Facts] error listing facts: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -29,7 +31,9 @@ func Lister(svc Service) http.HandlerFunc {
 
 func ListWithFacts(svc Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fms, err := svc.ListFactWithMyth(r.Context())
+		locale := r.URL.Query().Get("locale")
+
+		fms, err := svc.ListFactWithMyth(r.Context(), locale)
 		if err != nil {
 			logger.Errorf("[FactsMyths] error listing facts: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)

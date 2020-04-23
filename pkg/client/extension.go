@@ -8,8 +8,8 @@ import (
 )
 
 type CountriesData struct {
-	Total     int
-	Countries []Country `json:"Countries"`
+	Global    summary
+	Countries []Country
 }
 
 type byTotalConfirmed []Country
@@ -31,23 +31,27 @@ func (c Client) GetTopCountriesData(ctx context.Context, top int) (CountriesData
 	}
 	maxConfirmed := byTotalConfirmed(summary.Countries)
 	sort.Sort(maxConfirmed)
-	return CountriesData{Total: top, Countries: maxConfirmed[:top]}, nil
+	return CountriesData{Countries: maxConfirmed[:top]}, nil
 }
 
 func (c Client) GetCountriesDataWithDeaths(ctx context.Context) (CountriesData, error) {
-	summary, err := c.Summary(ctx)
+	resp, err := c.Summary(ctx)
 	if err != nil {
 		return CountriesData{}, err
 	}
+	var global summary
 	var data []Country
-	for _, c := range summary.Countries {
+	for _, c := range resp.Countries {
 		if c.TotalDeaths > 0 {
 			data = append(data, c)
+			global.TotalDeaths += c.TotalDeaths
+			global.TotalConfirmed += c.TotalConfirmed
+			global.TotalRecovered += c.TotalRecovered
 		}
 	}
 	countriesWithDeaths := byTotalDeaths(data)
 	sort.Sort(countriesWithDeaths)
-	return CountriesData{Total: len(countriesWithDeaths), Countries: countriesWithDeaths}, nil
+	return CountriesData{Global: global, Countries: countriesWithDeaths}, nil
 }
 
 type CountriesCases struct {

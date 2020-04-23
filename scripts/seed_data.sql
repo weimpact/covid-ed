@@ -1,21 +1,26 @@
-INSERT INTO facts (id, title, description)
+INSERT INTO facts (locale, title, description)
     VALUES
-    (1, 'Mask only prevents spreading from you', 'If you wear mask and sneeze you will not spread to others'),
-    (2, 'Everyone gets corona', '85k+ deaths across world due to corona of all ages'),
-    (3, 'Corona is not human made', 'corona virus is not made in lab by humans as it is not mismash of existing virus');
+    ('en-US', 'Mask only prevents spreading from you', 'If you wear mask and sneeze you will not spread to others'),
+    ('en-US', 'Everyone gets corona', '85k+ deaths across world due to corona of all ages'),
+    ('en-US', 'Corona is not human made', 'corona virus is not made in lab by humans as it is not mismash of existing virus'),
+    ('ta', 'எந்த வயதினரும் கொரோனாவைப் பெறலாம்', 'சீனாவில் பெரும்பான்மையான வழக்குகள் - 87% - 30 முதல் 79 வயதிற்குட்பட்டவர்களில் உள்ளன, பிப்ரவரி 11 ஆம் தேதி நிலவரப்படி கோவிட் -19 நோயால் கண்டறியப்பட்டவர்களில் 72,314 பேரின் தரவுகளின் அடிப்படையில் சீனாவின் நோய் கட்டுப்பாட்டு மையம் கடந்த மாதம் அறிக்கை செய்தது. மற்றவர்களுடன் அடிக்கடி தொடர்புகொள்வது போன்ற வாழ்க்கை முறையை விட உயிரியலைப் பற்றி ஏதாவது. பதின்ம வயதினரும், 20 வயதிற்குட்பட்டவர்களும் பள்ளி, வேலை மற்றும் பொதுப் போக்குவரத்தில் பலரைச் சந்திக்கிறார்கள், ஆனாலும் அவர்கள் குறிப்பிடத்தக்க விகிதத்தில் நோயைக் குறைப்பதாகத் தெரியவில்லை: 8.1% வழக்குகள் மட்டுமே 20-சில விஷயங்கள், 1.2% பதின்ம வயதினர்கள், மற்றும் 0.9% 9 அல்லது அதற்கு மேற்பட்டவர்கள். பிப்ரவரி 20 ஆம் தேதி நிலவரப்படி 78% வழக்குகள் 30 முதல் 69 வயதுடையவர்களில் இருப்பதாக சீனாவிற்கான உலக சுகாதார அமைப்பு பணி கண்டறிந்துள்ளது.'),
+    ('ta', 'தும்மல் அல்லது இருமல் போது உமிழக்கூடிய துளிகள் வழியாக கொரோனா பரவுகிறது', 'ஆதாரங்களின் அடிப்படையில், COVID-19 நோயாளிகளை கவனித்துக்கொள்பவர்களுக்கு துளி மற்றும் தொடர்பு முன்னெச்சரிக்கை நடவடிக்கைகளை WHO தொடர்ந்து பரிந்துரைத்து வருகிறது. ஆபத்து மதிப்பீட்டின்படி, ஏரோசல் உருவாக்கும் நடைமுறைகள் மற்றும் ஆதரவு சிகிச்சை மேற்கொள்ளப்படும் சூழ்நிலைகள் மற்றும் அமைப்புகளுக்கான வான்வழி முன்னெச்சரிக்கை நடவடிக்கைகளை WHO தொடர்ந்து பரிந்துரைக்கிறது'),
+    ('ta', 'சமூக தூரத்தின் மூலம் மட்டுமே கொரோனாவைத் தடுக்க முடியும்', 'சமூக தூரத்தின் மூலம் மட்டுமே கொரோனாவைத் தடுக்க முடியும்');
 
 
-INSERT INTO myths (title, description, fact_id)
+INSERT INTO myths (locale, title, description, fact_id)
     VALUES
-    ('Face masks protect against coronavirus', 'if you wear face mask then you wont get corona', 1),
-    ('Only older adults and young gets corona', 'old and young are subject to disease and at risk', 2),
-    ('Corona is human made and spread from china lab', 'china wuhans labe is the source', 3);
+    ('en-US', 'Face masks protect against coronavirus', 'if you wear face mask then you wont get corona', 1),
+    ('en-US', 'Only older adults and young gets corona', 'old and young are subject to disease and at risk', 2),
+    ('en-US', 'Corona is human made and spread from china lab', 'china wuhans labe is the source', 3),
+    ('ta', 'குழந்தைகள் கொரோனா வைரஸைப் பெற முடியாது', 'ஆரம்ப அறிக்கைகள் குழந்தைகள் கொரோனாவுக்கு குறைவாகவே பாதிக்கப்படுகின்றன என்று பரிந்துரைத்தன, ஆனால் பின்னர் குழந்தைகள் பெரியவர்களைப் போலவே பாதிக்கப்படுகின்றனர் என்று அறியப்படுகிறது.', 4),
+    ('ta', 'புதிய கொரோனா வைரஸ் கொசு கடித்தால் பரவுகிறது', 'புதிய கொரோனா வைரஸ் கொசுக்களால் பரவக்கூடும் என்பதற்கான எந்த தகவலும் ஆதாரமும் இன்றுவரை இல்லை. புதிய கொரோனா வைரஸ் என்பது ஒரு சுவாச வைரஸ் ஆகும், இது முதன்மையாக பாதிக்கப்பட்ட நபர் இருமும்போது அல்லது தும்மும்போது உருவாகும் நீர்த்துளிகள் மூலமாகவோ அல்லது உமிழ்நீர் துளிகள் மூலமாகவோ அல்லது மூக்கிலிருந்து வெளியேறும் மூலமாகவோ பரவுகிறது. உங்களைப் பாதுகாத்துக் கொள்ள, ஆல்கஹால் சார்ந்த கை தடவினால் உங்கள் கைகளை அடிக்கடி சுத்தம் செய்யுங்கள் அல்லது சோப்பு மற்றும் தண்ணீரில் கழுவவும். மேலும், இருமல் மற்றும் தும்மக்கூடிய எவருடனும் நெருங்கிய தொடர்பைத் தவிர்க்கவும்.', 5);
 
 
-INSERT INTO articles (title, url, fact_id)
+INSERT INTO articles (locale, title, url, fact_id)
     VALUES
-    ('covid is not human mande (with papers)', 'https://www.sciencenews.org/article/coronavirus-covid-19-not-human-made-lab-genetic-analysis-nature', 3),
-    ('covid is not human mande (livescience blog)', 'https://www.livescience.com/coronavirus-not-human-made-in-lab.html', 3);
-
+    ('en-US', 'covid is not human mande (with papers)', 'https://www.sciencenews.org/article/coronavirus-covid-19-not-human-made-lab-genetic-analysis-nature', 3),
+    ('en-US', 'covid is not human mande (livescience blog)', 'https://www.livescience.com/coronavirus-not-human-made-in-lab.html', 3),
+    ('ta', 'எந்த வயதினரும் கொரோனாவைப் பெறலாம் (who) கட்டுரை', 'https://www1.nyc.gov/assets/doh/downloads/pdf/imm/covid-19-daily-data-summary-deaths-04152020-1.pdf', 4);
 
 

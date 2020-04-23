@@ -3,7 +3,9 @@ package facts
 import (
 	"context"
 
+	"github.com/weimpact/covid-ed/logger"
 	"github.com/weimpact/covid-ed/store"
+	"golang.org/x/text/language"
 )
 
 type Service struct {
@@ -14,6 +16,7 @@ type Myth struct {
 	ID          int    `json:"-"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	Locale      string `json:"locale,omitempty"`
 }
 
 type Fact struct {
@@ -21,6 +24,7 @@ type Fact struct {
 	Title       string    `json:"title"`
 	Articles    []Article `json:"articles,omitempty"`
 	Description string    `json:"description"`
+	Locale      string    `json:"locale,omitempty"`
 }
 
 func (f *Fact) AddArticle(a Article) {
@@ -32,6 +36,7 @@ type Article struct {
 	Title  string `json:"title"`
 	URL    string `json:"url"`
 	FactID int    `json:"-"`
+	Locale string `json:"locale,omitempty"`
 }
 
 type FactAndMyth struct {
@@ -39,8 +44,22 @@ type FactAndMyth struct {
 	Myth `json:"myth"`
 }
 
-func (s Service) ListFacts(ctx context.Context) ([]Fact, error) {
-	fs, err := s.store.FetchFacts(ctx)
+func (s Service) getLocale(l string) language.Tag {
+	defaultLang := language.AmericanEnglish
+	if l == "" {
+		return defaultLang
+	}
+	lang, err := language.Parse(l)
+	if err != nil {
+		logger.Infof("[Facts.Service] unsupported locale: %s err: %v; returning default en-US", l, err)
+		return defaultLang
+	}
+	return lang
+}
+
+func (s Service) ListFacts(ctx context.Context, lang string) ([]Fact, error) {
+	locale := s.getLocale(lang)
+	fs, err := s.store.FetchFacts(ctx, locale)
 	if err != nil {
 		return nil, err
 	}
@@ -59,14 +78,15 @@ func (s Service) ListFacts(ctx context.Context) ([]Fact, error) {
 	}
 	for _, a := range articles {
 		key := dataMap[a.FactID]
-		art := Article{a.ID, a.Title, a.URL, a.FactID}
+		art := Article{a.ID, a.Title, a.URL, a.FactID, a.Locale}
 		data[key].AddArticle(art)
 	}
 	return data, nil
 }
 
-func (s Service) ListFactWithMyth(ctx context.Context) ([]FactAndMyth, error) {
-	fms, err := s.store.FetchFactsAndMyths(ctx)
+func (s Service) ListFactWithMyth(ctx context.Context, lang string) ([]FactAndMyth, error) {
+	locale := s.getLocale(lang)
+	fms, err := s.store.FetchFactsAndMyths(ctx, locale)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +106,7 @@ func (s Service) ListFactWithMyth(ctx context.Context) ([]FactAndMyth, error) {
 	}
 	for _, a := range articles {
 		key := dataMap[a.FactID]
-		art := Article{a.ID, a.Title, a.URL, a.FactID}
+		art := Article{a.ID, a.Title, a.URL, a.FactID, a.Locale}
 		data[key].AddArticle(art)
 	}
 	return data, nil
