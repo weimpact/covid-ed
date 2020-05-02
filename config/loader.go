@@ -20,6 +20,10 @@ func MustLoad() {
 		errs = append(errs, err)
 	}
 
+	if err := envconfig.Process("STATIC_SERVER", &app.StaticServer); err != nil {
+		errs = append(errs, err)
+	}
+
 	if len(errs) != 0 {
 		log.Fatalf("Error loading configuration: %v", errs)
 	}

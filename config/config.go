@@ -13,13 +13,25 @@ type Server struct {
 	AllowedDomains string `split_words:"true"`
 }
 
+type StaticServer struct {
+	Host   string `required:"true"`
+	Scheme string `default:"http"`
+	Suffix string
+}
+
 type Application struct {
 	server Server
 	db     DB
+	StaticServer
 }
 
 func AppAddress() string {
 	return fmt.Sprintf("%s:%d", app.server.Host, app.server.Port)
+}
+
+func StaticServerDomain() string {
+	cfg := app.StaticServer
+	return fmt.Sprintf("%s://%s/%s", cfg.Scheme, cfg.Host, cfg.Suffix)
 }
 
 func AccessControlAllowOrigin() []string {

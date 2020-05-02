@@ -9,6 +9,7 @@ import (
 	"github.com/weimpact/covid-ed/config"
 	"github.com/weimpact/covid-ed/country"
 	"github.com/weimpact/covid-ed/facts"
+	"github.com/weimpact/covid-ed/funds"
 	"github.com/weimpact/covid-ed/lang"
 	"github.com/weimpact/covid-ed/pkg/client"
 	"github.com/weimpact/covid-ed/store"
@@ -32,7 +33,10 @@ func server() (*mux.Router, error) {
 		return nil, err
 	}
 	store := store.Store{DB: db}
+
 	factService := facts.NewService(store)
+	fundService := funds.NewService(store)
+
 	m.HandleFunc("/ping", PingHandler())
 
 	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.CaseLister(countryService)))
@@ -41,6 +45,7 @@ func server() (*mux.Router, error) {
 	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
 	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages()))
 	m.HandleFunc("/countries", gomw.RequestLogger(country.List(countryService)))
+	m.HandleFunc("/funds", gomw.RequestLogger(funds.Lister(fundService)))
 
 	return m, nil
 }

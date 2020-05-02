@@ -1,6 +1,5 @@
 INSERT INTO facts (locale, title, description)
-    VALUES
-    ('en-US', 'Mask only prevents spreading from you', 'If you wear mask and sneeze you will not spread to others'),
+    VALUES ('en-US', 'Mask only prevents spreading from you', 'If you wear mask and sneeze you will not spread to others'),
     ('en-US', 'Everyone gets corona', '85k+ deaths across world due to corona of all ages'),
     ('en-US', 'Corona is not human made', 'corona virus is not made in lab by humans as it is not mismash of existing virus'),
     ('ta', 'எந்த வயதினரும் கொரோனாவைப் பெறலாம்', 'சீனாவில் பெரும்பான்மையான வழக்குகள் - 87% - 30 முதல் 79 வயதிற்குட்பட்டவர்களில் உள்ளன, பிப்ரவரி 11 ஆம் தேதி நிலவரப்படி கோவிட் -19 நோயால் கண்டறியப்பட்டவர்களில் 72,314 பேரின் தரவுகளின் அடிப்படையில் சீனாவின் நோய் கட்டுப்பாட்டு மையம் கடந்த மாதம் அறிக்கை செய்தது. மற்றவர்களுடன் அடிக்கடி தொடர்புகொள்வது போன்ற வாழ்க்கை முறையை விட உயிரியலைப் பற்றி ஏதாவது. பதின்ம வயதினரும், 20 வயதிற்குட்பட்டவர்களும் பள்ளி, வேலை மற்றும் பொதுப் போக்குவரத்தில் பலரைச் சந்திக்கிறார்கள், ஆனாலும் அவர்கள் குறிப்பிடத்தக்க விகிதத்தில் நோயைக் குறைப்பதாகத் தெரியவில்லை: 8.1% வழக்குகள் மட்டுமே 20-சில விஷயங்கள், 1.2% பதின்ம வயதினர்கள், மற்றும் 0.9% 9 அல்லது அதற்கு மேற்பட்டவர்கள். பிப்ரவரி 20 ஆம் தேதி நிலவரப்படி 78% வழக்குகள் 30 முதல் 69 வயதுடையவர்களில் இருப்பதாக சீனாவிற்கான உலக சுகாதார அமைப்பு பணி கண்டறிந்துள்ளது.'),
@@ -24,3 +23,8 @@ INSERT INTO articles (locale, title, url, fact_id)
     ('ta', 'எந்த வயதினரும் கொரோனாவைப் பெறலாம் (who) கட்டுரை', 'https://www1.nyc.gov/assets/doh/downloads/pdf/imm/covid-19-daily-data-summary-deaths-04152020-1.pdf', 4);
 
 
+INSERT INTO funds (website, donate_url, title, description, image_url)
+    VALUES 
+    ('https://www.feedingindia.org', 'https://www.feedingindia.org/donate', 'Zomato FeedingIndia', 'Zomato initiated the "Feed the Daily Wager" project to provide food support to such families and to help them have a reliable supply of meals in the absence of employment opportunities', 'feedingindia.png'),
+    ('https://indiafightscorona.giveindia.org', 'https://fundraisers.giveindia.org/donate/LC5ead82e1ae804#!/login', 'India Fights Corona', 'hygiene kits and meals to families hit by covid, site holds multiple fund campaigns', 'indiafightscorona.png'),
+    ('https://www.pmcares.gov.in/', 'https://www.pmcares.gov.in/en/web/contribution/donate_india', 'PM Cares Fund', 'public charitable trust under the name of Prime Minister and emergency relief fund to provide relief to the affected', 'pmcares.png');
