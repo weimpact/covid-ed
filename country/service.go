@@ -57,5 +57,16 @@ func (s Service) GetCountriesData(ctx context.Context, filter Filter) (client.Co
 }
 
 func (s Service) GetCountries(ctx context.Context) (client.Countries, error) {
-	return s.cli.GetCountries(ctx)
+	summary, err := s.cli.Summary(ctx)
+	if err != nil {
+		return client.Countries{}, err
+	}
+	var countries []client.CountryInfo
+	for _, s := range summary.Countries {
+		if s.TotalConfirmed > 0 {
+			c := client.CountryInfo{Country: s.Country, Slug: s.Slug, ISO2: s.CountryCode}
+			countries = append(countries, c)
+		}
+	}
+	return countries, nil
 }

@@ -24,7 +24,8 @@ func CountriesAggregatedCasesHandler(svc aggregatedService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		countriesQ := r.URL.Query().Get("countries")
 		cns := strings.Split(countriesQ, ",")
-		if len(cns) == 0 {
+		if countriesQ == "" {
+			logger.Errorf("[CountriesAggregated] No countries information's available")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

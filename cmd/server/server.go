@@ -49,7 +49,7 @@ func accessController(next http.Handler) http.Handler {
 	domains := config.AccessControlAllowOrigin()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for _, allowed := range domains {
-			if r.Host == allowed {
+			if r.Header.Get("Origin") == allowed {
 				w.Header().Set("Access-Control-Allow-Origin", allowed)
 			}
 
