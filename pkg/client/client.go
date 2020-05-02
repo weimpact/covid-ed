@@ -91,3 +91,20 @@ func (c Client) DayOneCountryLiveCasesEveryday(ctx context.Context, country stri
 	defer resp.Body.Close()
 	return cases, err
 }
+
+func (c Client) GetCountries(ctx context.Context) (Countries, error) {
+	url := fmt.Sprintf("%s/countries", c.baseURL)
+	resp, err := c.httpCli.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error getting response code: %d", resp.StatusCode)
+	}
+	var countries Countries
+	if err := json.NewDecoder(resp.Body).Decode(&countries); err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return countries, err
+}

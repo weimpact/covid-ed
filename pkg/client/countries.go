@@ -13,8 +13,6 @@ type Country struct {
 	Date           string
 }
 
-type Countries []Country
-
 type summary struct {
 	NewConfirmed   int64
 	TotalConfirmed int64
@@ -25,6 +23,13 @@ type summary struct {
 }
 
 type Summary struct {
-	Global summary
-	Countries
+	Global    summary
+	Countries []Country
+}
+
+type Countries []CountryInfo
+type CountryInfo struct {
+	Country string
+	Slug    string
+	ISO2    string
 }

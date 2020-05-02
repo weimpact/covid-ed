@@ -55,3 +55,7 @@ func (s Service) GetCountriesData(ctx context.Context, filter Filter) (client.Co
 	}
 	return client.CountriesData{}, nil
 }
+
+func (s Service) GetCountries(ctx context.Context) (client.Countries, error) {
+	return s.cli.GetCountries(ctx)
+}

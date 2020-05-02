@@ -12,9 +12,10 @@ import (
 
 type service interface {
 	GetCountriesData(context.Context, Filter) (client.CountriesData, error)
+	GetCountries(ctx context.Context) (client.Countries, error)
 }
 
-func Lister(svc service) http.HandlerFunc {
+func CaseLister(svc service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var filter Filter
 		topQ := r.URL.Query().Get("top")
@@ -35,12 +36,30 @@ func Lister(svc service) http.HandlerFunc {
 		resp, err := svc.GetCountriesData(r.Context(), filter)
 		if err != nil {
 			logger.Errorf("[CountriesData] error fetching countries data: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
 			logger.Errorf("[CountriesData] error writing response: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func List(svc service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		resp, err := svc.GetCountries(r.Context())
+		if err != nil {
+			logger.Errorf("[CountriesList] error fetching countries data: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			logger.Errorf("[Countries] error writing response: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 	}
 }

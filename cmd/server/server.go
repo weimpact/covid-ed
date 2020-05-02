@@ -35,19 +35,25 @@ func server() (*mux.Router, error) {
 	factService := facts.NewService(store)
 	m.HandleFunc("/ping", PingHandler())
 
-	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.Lister(countryService)))
+	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.CaseLister(countryService)))
 	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService)))
 	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService)))
 	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
 	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages()))
+	m.HandleFunc("/countries", gomw.RequestLogger(country.List(countryService)))
 
 	return m, nil
 }
 
 func accessController(next http.Handler) http.Handler {
+	domains := config.AccessControlAllowOrigin()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", config.AccessControlAllowOrigin())
+		for _, allowed := range domains {
+			if r.Host == allowed {
+				w.Header().Set("Access-Control-Allow-Origin", allowed)
+			}
 
+		}
 		next.ServeHTTP(w, r)
 	})
 }

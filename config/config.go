@@ -2,14 +2,15 @@ package config
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
 type Server struct {
-	Host                     string `required:"true"`
-	Port                     int    `envconfig:"PORT"`
-	Scheme                   string `default:"http"`
-	AccessControlAllowOrigin string `split_words:"true"`
+	Host           string `required:"true"`
+	Port           int    `envconfig:"PORT"`
+	Scheme         string `default:"http"`
+	AllowedDomains string `split_words:"true"`
 }
 
 type Application struct {
@@ -21,8 +22,12 @@ func AppAddress() string {
 	return fmt.Sprintf("%s:%d", app.server.Host, app.server.Port)
 }
 
-func AccessControlAllowOrigin() string {
-	return app.server.AccessControlAllowOrigin
+func AccessControlAllowOrigin() []string {
+	domains := app.server.AllowedDomains
+	if domains == "" {
+		return nil
+	}
+	return strings.Split(domains, ",")
 }
 
 func Database() DB {
