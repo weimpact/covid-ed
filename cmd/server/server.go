@@ -11,6 +11,7 @@ import (
 	"github.com/weimpact/covid-ed/facts"
 	"github.com/weimpact/covid-ed/funds"
 	"github.com/weimpact/covid-ed/lang"
+	"github.com/weimpact/covid-ed/media"
 	"github.com/weimpact/covid-ed/pkg/client"
 	"github.com/weimpact/covid-ed/store"
 
@@ -36,6 +37,7 @@ func server() (*mux.Router, error) {
 
 	factService := facts.NewService(store)
 	fundService := funds.NewService(store)
+	mediaService := media.NewService(store)
 
 	m.HandleFunc("/ping", PingHandler())
 
@@ -46,6 +48,7 @@ func server() (*mux.Router, error) {
 	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages()))
 	m.HandleFunc("/countries", gomw.RequestLogger(country.List(countryService)))
 	m.HandleFunc("/funds", gomw.RequestLogger(funds.Lister(fundService)))
+	m.HandleFunc("/media", gomw.RequestLogger(media.Lister(mediaService)))
 
 	return m, nil
 }
