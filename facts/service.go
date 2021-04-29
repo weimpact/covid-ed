@@ -60,7 +60,7 @@ func (s Service) getLocale(l string) language.Tag {
 func (s Service) ListFacts(ctx context.Context, lang string) ([]Fact, error) {
 	locale := s.getLocale(lang)
 	fs, err := s.store.FetchFacts(ctx, locale)
-	if err != nil {
+	if err != nil || len(fs) == 0 {
 		return nil, err
 	}
 	data := make([]Fact, len(fs))

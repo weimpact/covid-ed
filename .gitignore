@@ -8,3 +8,4 @@ vendor
 **/*.swp
 heroku.env
 bin
+*.env

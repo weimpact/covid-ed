@@ -48,6 +48,7 @@ vet:
 
 build:
 	go build -o ${BINARY} ./cmd/server
+	GOOS=linux GOARCH=amd64 go build -ldflags "-w" -o  ./bin/covid-ed-server ./cmd/server
 
 db.migrate:
 	migrate -verbose -path migrations -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL_MODE}" up

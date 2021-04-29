@@ -22,6 +22,7 @@ import (
 func server() (*mux.Router, error) {
 	m := mux.NewRouter()
 	m.Use(mux.MiddlewareFunc(contentWriter))
+	m.Use(mux.CORSMethodMiddleware(m))
 	m.Use(mux.MiddlewareFunc(accessController))
 
 	cli, err := client.New()
@@ -41,14 +42,14 @@ func server() (*mux.Router, error) {
 
 	m.HandleFunc("/ping", PingHandler())
 
-	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.CaseLister(countryService)))
-	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService)))
-	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService)))
-	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService)))
-	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages()))
-	m.HandleFunc("/countries", gomw.RequestLogger(country.List(countryService)))
-	m.HandleFunc("/funds", gomw.RequestLogger(funds.Lister(fundService)))
-	m.HandleFunc("/media", gomw.RequestLogger(media.Lister(mediaService)))
+	m.HandleFunc("/countries/cases", gomw.RequestLogger(country.CaseLister(countryService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/countries/cases/aggregated", gomw.RequestLogger(country.CountriesAggregatedCasesHandler(countryService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/facts", gomw.RequestLogger(facts.Lister(factService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/facts_myths", gomw.RequestLogger(facts.ListWithFacts(factService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/languages", gomw.RequestLogger(lang.ListSupportedLanguages())).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/countries", gomw.RequestLogger(country.List(countryService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/funds", gomw.RequestLogger(funds.Lister(fundService))).Methods(http.MethodGet, http.MethodOptions)
+	m.HandleFunc("/media", gomw.RequestLogger(media.Lister(mediaService))).Methods(http.MethodGet, http.MethodOptions)
 
 	return m, nil
 }
@@ -59,8 +60,12 @@ func accessController(next http.Handler) http.Handler {
 		for _, allowed := range domains {
 			if r.Header.Get("Origin") == allowed {
 				w.Header().Set("Access-Control-Allow-Origin", allowed)
+				w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Auth-Code, Set-Cookie")
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
 			}
-
+		}
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
 		}
 		next.ServeHTTP(w, r)
 	})
